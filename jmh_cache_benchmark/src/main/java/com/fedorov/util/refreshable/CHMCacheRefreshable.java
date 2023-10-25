@@ -53,9 +53,7 @@ public class CHMCacheRefreshable  implements ICacheRefreshable<String>{
         private static final Random  rand = new Random();
     
         static {
-            // System.out.println("before initRefreshThread");
             initRefreshThread();
-            // System.out.println("after initRefreshThread");
         }
 
         public static void shutdown(){
@@ -70,21 +68,16 @@ public class CHMCacheRefreshable  implements ICacheRefreshable<String>{
         private static void initRefreshThread(){
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
             final Runnable runnable = () -> {  
-                if( !isLoaded && !Thread.currentThread().interrupted()){
-                        // System.out.println("begin refreshing");
+                if( !isLoaded && !Thread.interrupted()){
                         final ArrayList<String> keys = new ArrayList<>(  MAX_CACHE_SIZE  );
                         final CHMCacheRefreshable newInstance = new CHMCacheRefreshable();
                         try {
-                            // System.out.println("before fill cache");
                             CacheFiller.fillTheCache(newInstance, keys, rand, MAX_CACHE_SIZE, MAX_EHCACHE_SIZE, MAX_KEY_LENGTH);
-                            // System.out.println("after fill cache");
                         } catch (NoSuchMethodException | SecurityException | IllegalAccessException
                                 | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
-                        // System.out.println("before instance = newInstance");
                         instance = newInstance;
-                        // System.out.println("after instance = newInstance");
                         isLoaded = true;
                     }
             };  
