@@ -7,7 +7,7 @@ public class CHMCache<T> implements ICacheIterable<T> {
     protected static CHMCache<Object> instance;
     private ConcurrentHashMap<String,T> cache;
 
-    private CHMCache(){
+    protected CHMCache(){
         cache = new ConcurrentHashMap<>((int) (MAX_CACHE_SIZE*1.4));
     }
 
