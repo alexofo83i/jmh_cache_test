@@ -1,5 +1,8 @@
-package com.fedorov.util; 
-    
+package com.fedorov.util.generic;
+
+import com.fedorov.util.generic.ICache;
+import com.fedorov.util.generic.RLCache;
+
 public class RLCacheJUnitTest extends ICacheJUnitTest {
 
     @Override

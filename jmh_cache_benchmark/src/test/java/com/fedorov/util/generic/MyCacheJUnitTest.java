@@ -1,5 +1,7 @@
-package com.fedorov.util;
+package com.fedorov.util.generic;
 
+import com.fedorov.util.generic.ICache;
+import com.fedorov.util.generic.MyCache;
 
 public class MyCacheJUnitTest extends ILRUCacheJUnitTest{
 

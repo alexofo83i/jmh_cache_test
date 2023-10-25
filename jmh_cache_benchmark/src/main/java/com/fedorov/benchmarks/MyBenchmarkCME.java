@@ -21,8 +21,8 @@ import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Timeout;
 import org.openjdk.jmh.annotations.Warmup;
 
-import com.fedorov.util.ICache;
-import com.fedorov.util.ICacheIterable; 
+import com.fedorov.util.generic.ICache;
+import com.fedorov.util.generic.ICacheIterable; 
 
 
 @BenchmarkMode({Mode.AverageTime/* , Mode.SampleTime */})
@@ -51,13 +51,16 @@ import com.fedorov.util.ICacheIterable;
 @Measurement(iterations = 1, time = 10, timeUnit = TimeUnit.SECONDS)
 @Timeout(time = 2, timeUnit = TimeUnit.MINUTES)
 @State(Scope.Benchmark)
+/**
+ * CME means ConcurrentModificationException
+ */
 public class MyBenchmarkCME extends MyBenchmark{
 
-    @Param( { "com.fedorov.util.CHMCache"
-            , "com.fedorov.util.RLCache"
-            , "com.fedorov.util.RLCacheLRU"
-            , "com.fedorov.util.MyCache1"
-            , "com.fedorov.util.MyCache2" }) 
+    @Param( { "com.fedorov.util.generic.CHMCache"
+            , "com.fedorov.util.generic.RLCache"
+            , "com.fedorov.util.generic.RLCacheLRU"
+            , "com.fedorov.util.generic.MyCache1"
+            , "com.fedorov.util.generic.MyCache2" }) 
     public String cacheImplementation;
 
     protected ICacheIterable<String> cachee;

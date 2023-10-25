@@ -49,12 +49,12 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Benchmark)
 public class MyBenchmarkGetPut extends MyBenchmark{
 
-    @Param( { "com.fedorov.util.RLCache"
-            , "com.fedorov.util.RLCacheLRU"
-            , "com.fedorov.util.CHMCache"
+    @Param( { "com.fedorov.util.generic.RLCache"
+            , "com.fedorov.util.generic.RLCacheLRU"
+            , "com.fedorov.util.generic.CHMCache"
             // , "com.fedorov.util.MyCacheFixed"
-            , "com.fedorov.util.MyCache1"
-            , "com.fedorov.util.MyCache2" }) 
+            , "com.fedorov.util.generic.MyCache1"
+            , "com.fedorov.util.generic.MyCache2" }) 
     public String cacheImplementation;
  
 

@@ -1,7 +1,9 @@
-package com.fedorov.util;
+package com.fedorov.util.generic;
 
 
 import org.junit.Test;
+
+import com.fedorov.util.generic.ICache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;    
     
+/**
+ * that test is not valid yet
+ */
 public class Volatile1Test {
 
     Volatile1 vol;

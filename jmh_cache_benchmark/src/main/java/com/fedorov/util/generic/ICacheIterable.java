@@ -1,4 +1,4 @@
-package com.fedorov.util;
+package com.fedorov.util.generic;
 
 public interface ICacheIterable<T> extends ICache<T>{
     public void doForEach(  Callable<T> coll )  throws Exception;

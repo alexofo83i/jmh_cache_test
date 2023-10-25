@@ -1,4 +1,4 @@
-package com.fedorov.util;
+package com.fedorov.util.generic;
 
 
 public interface ICache<T> {

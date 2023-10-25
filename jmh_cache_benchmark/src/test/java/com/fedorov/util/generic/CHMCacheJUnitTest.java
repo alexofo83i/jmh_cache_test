@@ -1,5 +1,8 @@
-package com.fedorov.util;
-    
+package com.fedorov.util.generic;
+
+import com.fedorov.util.generic.CHMCache;
+import com.fedorov.util.generic.ICache;
+
 public class CHMCacheJUnitTest extends ICacheJUnitTest {
 
     @Override

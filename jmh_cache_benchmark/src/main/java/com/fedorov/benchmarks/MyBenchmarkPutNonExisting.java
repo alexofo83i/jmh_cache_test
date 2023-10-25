@@ -56,10 +56,10 @@ import java.util.stream.LongStream;
 
     private static final int MAX_NON_EXIST_KEYS = 50000000;
     
-    @Param( { "com.fedorov.util.RLCache"
-            , "com.fedorov.util.RLCacheLRU"
-            , "com.fedorov.util.CHMCache"
-            , "com.fedorov.util.MyCacheFixed"
+    @Param( { "com.fedorov.util.generic.RLCache"
+            , "com.fedorov.util.generic.RLCacheLRU"
+            , "com.fedorov.util.generic.CHMCache"
+            , "com.fedorov.util.generic.MyCacheFixed"
             // , "com.fedorov.util.MyCache1"
             // , "com.fedorov.util.MyCache2" 
         }) 

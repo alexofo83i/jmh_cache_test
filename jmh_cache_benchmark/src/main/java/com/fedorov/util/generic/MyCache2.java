@@ -1,9 +1,9 @@
-package com.fedorov.util;
+package com.fedorov.util.generic;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fedorov.util.ICacheIterable.Callable;
+import com.fedorov.util.generic.ICacheIterable.Callable;
 
  
 public class MyCache2<T> implements ICacheIterable<T>

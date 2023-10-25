@@ -7,6 +7,7 @@
  import java.util.Random;
  
  import com.fedorov.util.*;
+import com.fedorov.util.generic.ICache;
   
  public class MyBenchmark {
  
