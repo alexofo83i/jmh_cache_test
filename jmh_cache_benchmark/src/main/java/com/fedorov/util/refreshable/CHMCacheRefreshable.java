@@ -3,16 +3,17 @@ package com.fedorov.util.refreshable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;  
 import java.util.concurrent.Executors;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Random;
 import com.fedorov.util.generic.CacheFiller;  
+import java.util.concurrent.TimeUnit;
 
 public class CHMCacheRefreshable  implements ICacheRefreshable<String>{
     
     private ConcurrentHashMap<String,String> cache;
-    protected static volatile boolean isLoaded;
+    protected static volatile boolean isLoaded = false;
 
     public static  CHMCacheRefreshable  getInstance(){
         return Holder.instance;
@@ -32,7 +33,10 @@ public class CHMCacheRefreshable  implements ICacheRefreshable<String>{
         cache.put(key, obj);
     }
 
-    public void shutdown(){}
+    @Override
+    public void shutdown(){
+        Holder.shutdown();
+    }
  
     @Override
     public void refresh() {
@@ -41,42 +45,53 @@ public class CHMCacheRefreshable  implements ICacheRefreshable<String>{
 
     private static class Holder{
         public static CHMCacheRefreshable  instance;
+        private static ScheduledExecutorService scheduledExecutorService;
+
         private static final int MAX_KEY_LENGTH    = 20;
         private static final int MAX_EHCACHE_SIZE  = 10000;
         private static final int MAX_CACHE_SIZE    = 20000;
         private static final Random  rand = new Random();
     
         static {
+            // System.out.println("before initRefreshThread");
             initRefreshThread();
+            // System.out.println("after initRefreshThread");
+        }
+
+        public static void shutdown(){
+            scheduledExecutorService.shutdownNow();
+            try {
+                scheduledExecutorService.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         private static void initRefreshThread(){
-            ExecutorService ex  = Executors.newSingleThreadExecutor();  
-  
+            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
             final Runnable runnable = () -> {  
-                while( true ){
-                    if( !isLoaded){
-                        
+                if( !isLoaded && !Thread.currentThread().interrupted()){
+                        // System.out.println("begin refreshing");
                         final ArrayList<String> keys = new ArrayList<>(  MAX_CACHE_SIZE  );
                         final CHMCacheRefreshable newInstance = new CHMCacheRefreshable();
                         try {
+                            // System.out.println("before fill cache");
                             CacheFiller.fillTheCache(newInstance, keys, rand, MAX_CACHE_SIZE, MAX_EHCACHE_SIZE, MAX_KEY_LENGTH);
+                            // System.out.println("after fill cache");
                         } catch (NoSuchMethodException | SecurityException | IllegalAccessException
                                 | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                            throw new RuntimeException(e);
                         }
+                        // System.out.println("before instance = newInstance");
                         instance = newInstance;
+                        // System.out.println("after instance = newInstance");
                         isLoaded = true;
                     }
-                    try {
-                        Thread.sleep(10);
-                    }catch(InterruptedException e){
-                        throw new RuntimeException(e);
-                    }
-                }
             };  
-    
-            ex.submit(runnable);  
+            isLoaded = false;    
+            runnable.run();
+            
+            scheduledExecutorService.scheduleWithFixedDelay(runnable, 0, 100, TimeUnit.MILLISECONDS);
         }
     }
 }

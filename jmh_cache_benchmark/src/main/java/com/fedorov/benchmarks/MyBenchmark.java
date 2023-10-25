@@ -25,7 +25,7 @@ public class MyBenchmark {
  
      
     public void setUp(String cacheImplementation) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException{
-        Class<String> clazz = (Class<String>) Class.forName(cacheImplementation);
+        Class clazz = (Class ) Class.forName(cacheImplementation);
         Method medod = clazz.getMethod("getInstance");
         
         cache = (ICache<String>) medod.invoke(null);

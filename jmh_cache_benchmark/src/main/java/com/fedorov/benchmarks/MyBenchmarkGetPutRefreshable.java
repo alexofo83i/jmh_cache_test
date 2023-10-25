@@ -1,9 +1,9 @@
 package com.fedorov.benchmarks;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.math3.analysis.solvers.BaseSecantSolver.Method;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -21,10 +21,11 @@ import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Timeout;
 import org.openjdk.jmh.annotations.Warmup;
 
-import com.fedorov.util.generic.ICache; 
+import com.fedorov.util.generic.ICache;
+import com.fedorov.util.refreshable.ICacheRefreshable;
 
 
-@BenchmarkMode({Mode.AverageTime/* , Mode.SampleTime */})
+@BenchmarkMode({Mode.Throughput/*Mode.AverageTime , Mode.SampleTime */})
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @Fork(value = 1
     , jvmArgsAppend = { "-Xmx16g"
@@ -52,17 +53,19 @@ import com.fedorov.util.generic.ICache;
 @State(Scope.Benchmark)
 public class MyBenchmarkGetPutRefreshable extends MyBenchmark{
 
-    @Param( {  "com.fedorov.util.generic.CHMCacheRefreshable"
+    @Param( {  "com.fedorov.util.refreshable.CHMCacheRefreshable"
              }) 
     public String cacheImplementation;
  
+    Method medod;
 
     @Setup(Level.Iteration)
+    @SuppressWarnings("unchecked")
     public void setUp() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException{
-        // super.setUp(cacheImplementation);
+        // that is needed for generation of keys sequence for reading
+        super.setUp(cacheImplementation);
         Class<String> clazz = (Class<String>) Class.forName(cacheImplementation);
-        ((ICache) clazz)::
-        // Method medod = clazz.getMethod("getInstance");
+        medod = clazz.getMethod("getInstance");
     }
 
     @TearDown(Level.Trial)
@@ -73,20 +76,24 @@ public class MyBenchmarkGetPutRefreshable extends MyBenchmark{
         System.out.println("Shutdown finished");
     }
 
-    @Benchmark
-    @Group("cache")
-    @GroupThreads(10)
-    public Object testMethodReadExisting() {
-        String keyString = getRandomKeyExisting();
-        return cache.get(keyString);
+    @SuppressWarnings("unchecked")
+    public ICacheRefreshable<String> getCache(){
+        ICacheRefreshable<String> cacheFresh = null;
+         try {
+            cacheFresh = (ICacheRefreshable<String>) medod.invoke(null);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        return cacheFresh;
     }
 
     @Benchmark
     @Group("cache")
     @GroupThreads(10)
-    public Object testMethodReadNonExisting() {
-        String keyString = getRandomKeyNonExisting();
-        return cache.get(keyString);
+    public Object testMethodReadExisting() {
+        String keyString = getRandomKeyExisting();
+        ICacheRefreshable<String> cacheFresh = getCache();
+        return cacheFresh.get(keyString);
     }
 
     @Benchmark
@@ -94,7 +101,16 @@ public class MyBenchmarkGetPutRefreshable extends MyBenchmark{
     @GroupThreads(10)
     public void testMethodWrite() {
         String keyString = getRandomKeyExisting();
-        cache.put(keyString,keyString);
+        ICacheRefreshable<String> cacheFresh = getCache();
+        cacheFresh.put(keyString,keyString);
+    }
+
+    @Benchmark
+    @Group("cache")
+    @GroupThreads(1)
+    public void testMethodRefresh() {
+        ICacheRefreshable<String> cacheFresh = getCache();
+        cacheFresh.refresh();
     }
  
 }

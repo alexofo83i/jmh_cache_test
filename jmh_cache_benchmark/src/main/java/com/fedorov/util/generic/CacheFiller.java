@@ -18,7 +18,7 @@ public final class CacheFiller {
             }
             keys.add(keyString);
         }
-        System.out.println("keys : " + keys.size());
+        // System.out.println("keys : " + keys.size());
     }
 
     private static String generateRandomKey(Random rand, int MAX_KEY_LENGTH){
