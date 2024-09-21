@@ -83,7 +83,7 @@ import java.util.stream.LongStream;
             queueLocal.add(keyString);
         });
         queue = queueLocal;
-        System.out.println("Reinitializing finished");
+        System.out.println("Reinitializing finished!");
     }
 
     @TearDown(Level.Trial)

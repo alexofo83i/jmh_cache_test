@@ -43,7 +43,7 @@ public class MyBenchmark {
         //      keys.add(keyString);
         //  }
         CacheFiller.fillTheCache(cache, keys, rand, MAX_CACHE_SIZE, MAX_EHCACHE_SIZE, MAX_KEY_LENGTH);
-        System.out.println("keys : " + keys.size());
+        System.out.println("Keys : " + keys.size());
     }
 
     public String generateRandomKey(Random rand){
